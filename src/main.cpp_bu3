@@ -18,7 +18,7 @@ namespace defines {
 //    constexpr int iter = 100000;
 //    constexpr int iout = 100;
     constexpr int iter = 1000;
-    constexpr int iout = 100;
+    constexpr int iout = 10;
     constexpr real dt = 0.001; // torima
 
     // diffusion
@@ -28,7 +28,7 @@ namespace defines {
     constexpr real pi =3.14;
 
     // downsize
-     constexpr int downsize = 3;
+     constexpr real downsize = 3
 };
 
 class ValuesDiffusion {
@@ -167,7 +167,7 @@ setout(const ValuesDiffusion v, const int t) {
 //     average(f_ave, v);
 //     maximum(f_max, v);
     std::ostringstream oss;
-    oss << "data/t=" << std::setfill('0') << std::right<< std::setw(4)<<  t << ".dat";
+    oss << "data/t=" << t << ".dat";
         
     std::ofstream ofs(oss.str());
      ofs << "#t=" << std::setw(8) << t << "    x,    f,      average,	maximum" << std ::endl;
@@ -183,28 +183,21 @@ setout(const ValuesDiffusion v, const int t) {
 //              << std::setw(8) << ValuesDiffusion::f << std::endl;
     }
 
+   int 
 
-    //defalut 
-    ofs.close(); 
-//    oss.str("");
-//    oss.clear();
-   
-    std::ostringstream oss2;
-    oss2 << "data/t=" << std::setfill('0') << std::right<< std::setw(4)<< t << "_downsize"<< defines::downsize << ".dat";
-//    oss << "data/t=" << std::setfill('0') << std::right<< std::setw(4)<<  t << ".dat";
+   std::ostringstream oss;
+    oss << "data/t=" << t << "_downsize"<<  << .dat";
 
-     std::ofstream ofs2(oss2.str());
-     ofs2 << "#t=" << std::setw(8) << t << "    x,    f,      average,   maximum,	downsize =" << defines::downsize << std ::endl;
+    std::ofstream ofs(oss.str());
+     ofs << "#t=" << std::setw(8) << t << "    x,    f,      average,   maximum" << std ::endl;
 
     for(int i=0; i<defines::nx; i++) {
-     if(  i % defines::downsize  == 0){
-     //ofs << std::setw(8) << ValuesDiffusion::xx[i] << " "
+     ofs << std::setw(8) << ValuesDiffusion::xx[i] << " "
      //              << std::setw(8) << ValuesDiffusion::ff[i] << std::endl;
-     ofs2 << std::setw(8) << v.xx()[i] << " "
+     ofs << std::setw(8) << v.xx()[i] << " "
          << std::setw(8) << v.ff()[i] << " "
          << std::setw(8) << f_ave     << " "
          << std::setw(8) << f_max     << " " << std::endl;
-     }
      }
 
 
@@ -253,7 +246,7 @@ int main() {
 //            output.setout(v.f , v.x ,fout_step);
         }
 
-         
+        // 
         ValuesDiffusion::swap(&vn, &v);
         vn.time_integrate(v);
     }
