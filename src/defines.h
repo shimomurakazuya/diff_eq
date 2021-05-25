@@ -11,8 +11,10 @@ namespace defines {
     constexpr int ncx = nx / 2;
     constexpr int ncy = ny / 2;
     //constexpr real lx = nx - 1;
-    constexpr int iter = 100000;
+    constexpr int iter = 10000;
     constexpr int iout = 100;
+//    constexpr int iter = 5;
+//    constexpr int iout = 2;
     constexpr real dt = 0.001; // torima
 
     // diffusion

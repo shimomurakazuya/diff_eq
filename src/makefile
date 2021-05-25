@@ -18,7 +18,8 @@ $(TARGET): $(OBJS)
 
 clean:
 		rm -f $(TARGET)
-			rm -f $(OBJS)
+			rm -f $(OBJS)	
+			rm -f data/*.dat
 
 retultclean:
 		find -name data/ '*.dat' | xargs rm -f 
