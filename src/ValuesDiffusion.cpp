@@ -26,12 +26,12 @@ init_values() {
     for(int i=0; i<nx_; i++) {
         const real xi = (i - defines::ncx) * defines::dx / defines::delta;
         x_[i] = xi;
-      for (int j=0; j<ny_; j++){
-        const real yi = (i - defines::ncy) * defines::dx / defines::delta;
-        y_[i] = yi;
-        const int ij = index::index_xy(i, j);
-        f_[ij] = defines::fmax * std::exp( - (xi*xi + yi*yi ));
-      }
+        for (int j=0; j<ny_; j++){
+            const real yi = (i - defines::ncy) * defines::dx / defines::delta;
+            y_[i] = yi;
+            const int ij = index::index_xy(i, j);
+            f_[ij] = defines::fmax * std::exp( - (xi*xi + yi*yi ));
+        }
     }
 }
 
@@ -40,18 +40,19 @@ time_integrate(const ValuesDiffusion& valuesDiffusion) {
     real* fn = f_;
     const real* f = valuesDiffusion.f_;
     for(int i=0; i<defines::nx; i++) {
-    for(int j=0; j<defines::ny; j++) {
-        const int im = (i-1 + defines::nx) % defines::nx;
-        const int ip = (i+1 + defines::nx) % defines::nx;
-        const int jm = (i-1 + defines::ny) % defines::ny;
-        const int jp = (i+1 + defines::ny) % defines::ny;
-        const int ij = index::index_xy(i,j);
-        fn[ij] = f[ij] + 
+        for(int j=0; j<defines::ny; j++) {
+            const int im = (i-1 + defines::nx) % defines::nx;
+            const int ip = (i+1 + defines::nx) % defines::nx;
+            const int jm = (i-1 + defines::ny) % defines::ny;
+            const int jp = (i+1 + defines::ny) % defines::ny;
+            const int ij = index::index_xy(i,j);
+            fn[ij] = f[ij] + 
             + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[im] - 2*f[i] + f[ip])
             + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[jm] - 2*f[i] + f[jp]);
+        }
     }
 }
-}
+
 
 void ValuesDiffusion::
 copy_values(const ValuesDiffusion& valuesDiffusion) {

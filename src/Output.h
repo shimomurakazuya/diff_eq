@@ -6,14 +6,13 @@
 
 class Output{
 private  :
-      real* f_ave__;
+    real* f_ave__;
 
 public   :
-
-     void OutputDiffusionData( const ValuesDiffusion& v, int t);
-     real average(const ValuesDiffusion& v);
-     real maximum(const ValuesDiffusion& v);
-     void print_sum(const ValuesDiffusion& v, int t);
+    void OutputDiffusionData( const ValuesDiffusion& v, int t);
+    real average(const ValuesDiffusion& v);
+    real maximum(const ValuesDiffusion& v);
+    void print_sum(const ValuesDiffusion& v, int t);
 
 };
 #endif    
