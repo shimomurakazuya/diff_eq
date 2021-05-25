@@ -6,7 +6,10 @@ namespace defines {
     // x, t
     constexpr real dx = 1.0;
     constexpr int nx = 51;
-    constexpr int nc = nx / 2;
+    constexpr int ny = 51;
+    constexpr int ncell = nx*ny;
+    constexpr int ncx = nx / 2;
+    constexpr int ncy = ny / 2;
     //constexpr real lx = nx - 1;
     constexpr int iter = 100000;
     constexpr int iout = 100;
@@ -19,7 +22,8 @@ namespace defines {
     constexpr real pi =3.14;
 
     // downsize
-          constexpr int downsize = 3;
+    constexpr int downsize = 3;
+    
 
 };
 

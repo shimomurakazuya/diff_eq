@@ -4,8 +4,8 @@
 
 
 int main() {
-    ValuesDiffusion v (defines::nx);
-    ValuesDiffusion vn(defines::nx);
+    ValuesDiffusion v (defines::nx,defines::ny,defines::ncell);
+    ValuesDiffusion vn(defines::nx,defines::ny,defines::ncell);
     Output output;
 
     v .allocate_values();
@@ -19,10 +19,9 @@ int main() {
         // output
         if(t % defines::iout == 0) {
             const int fout_step = t / defines::iout;
-            v.print_sum(fout_step);
-            output.setout(v ,fout_step);
+            output.print_sum(v,fout_step);
+            output.OutputDiffusionData(v ,fout_step);
         }
-         
         ValuesDiffusion::swap(&vn, &v);
         vn.time_integrate(v);
     }
