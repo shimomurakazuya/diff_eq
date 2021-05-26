@@ -1,3 +1,7 @@
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include "defines.h"
 #include "ValuesDiffusion.h"
 #include "Output.h"
@@ -13,6 +17,8 @@ int main() {
 
     v .init_values();
     vn.init_values();
+
+    omp_set_num_threads(defines::thread_num);
 
     // main loop
     for(int t=0; t<defines::iter; t++) {

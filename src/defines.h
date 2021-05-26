@@ -4,7 +4,7 @@
 using real = float;
 namespace defines {
     // x, t
-    constexpr real dx = 1.0;
+    constexpr real dx = 2.0;
     constexpr int nx = 51;
     constexpr int ny = 51;
     constexpr int ncell = nx*ny;
@@ -26,6 +26,8 @@ namespace defines {
     // downsize
     constexpr int downsize = 3;
     
+    // 
+    constexpr int thread_num = 4;
 
 };
 

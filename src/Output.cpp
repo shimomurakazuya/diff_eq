@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -22,7 +23,7 @@ OutputDiffusionData(const ValuesDiffusion& v, const int t) {
     char filename[1024];
     sprintf(filename, "data/ascii_value_step%04d.dat",t ) ;
     FILE* fp = fopen( filename ,"w");
-    fprintf(fp,"t = %04d    x,   y,    f,      average, maximum \n",t  ); 
+    fprintf(fp,"#t = %04d    x,   y,    f,      average, maximum \n",t  ); 
 
     for(int i=0; i<defines::nx; i++) {
         for(int j=0; j<defines::ny; j++) {
@@ -35,14 +36,14 @@ OutputDiffusionData(const ValuesDiffusion& v, const int t) {
     char filename2[1024];
     sprintf(filename2, "data/ascii_value_step%04d_downsize%01d.dat",t,defines::downsize ) ;
     FILE* fp2 = fopen( filename2 ,"w");
-    fprintf(fp2,"t = %04d    x,   y,    f,      average, maximum \n",t  ); 
+    fprintf(fp2,"#t = %04d    x,   y,    f,      average, maximum \n",t  ); 
 
-    for(int i=0; i<defines::nx; i++) {
-        for(int j=0; j<defines::ny; j++) {
+    for(int i=0; i<defines::nx; i+= defines::downsize) {
+        for(int j=0; j<defines::ny; j+=defines::downsize) {
             const int ij = index::index_xy(i,j);
                 fprintf(fp2,"%8.3f %8.3f %8.8f %8.3f %8.3f\n",v.xx()[i],v.yy()[j], v.ff()[ij], f_ave, f_max ); 
             }
-        fprintf(fp,"\n" ); 
+        fprintf(fp2,"\n" ); 
     }    
 
 }

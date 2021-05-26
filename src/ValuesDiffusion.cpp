@@ -1,3 +1,8 @@
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>
@@ -23,6 +28,9 @@ deallocate_values() {
 
 void ValuesDiffusion::
 init_values() {
+#pragma omp parallel
+    { 
+#pragma omp for 
     for(int i=0; i<nx_; i++) {
         const real xi = (i - defines::ncx) * defines::dx / defines::delta;
         x_[i] = xi;
@@ -34,24 +42,51 @@ init_values() {
         }
     }
 }
-
-void ValuesDiffusion::
-time_integrate(const ValuesDiffusion& valuesDiffusion) {
-    real* fn = f_;
-    const real* f = valuesDiffusion.f_;
-    for(int i=0; i<defines::nx; i++) {
-        for(int j=0; j<defines::ny; j++) {
-        const int im = (i-1 + defines::nx) % defines::nx;
-        const int ip = (i+1 + defines::nx) % defines::nx;
-        const int jm = (i-1 + defines::ny) % defines::ny;
-        const int jp = (i+1 + defines::ny) % defines::ny;
-        const int ij = index::index_xy(i,j);
-        fn[ij] = f[ij] + 
-            + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[im] - 2*f[i] + f[ip])
-            + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[jm] - 2*f[i] + f[jp]);
-        }
-    }
 }
+
+ void ValuesDiffusion::
+ time_integrate(const ValuesDiffusion& valuesDiffusion) {
+     real* fn = f_;
+     const real* f = valuesDiffusion.f_;
+#pragma omp parallel
+    { 
+#pragma omp for 
+     for(int i=0; i<defines::nx; i++) {
+         for(int j=0; j<defines::ny; j++) {
+         const int ij = index::index_xy(i,j);
+         const int im = (ij-ny_ + defines::ncell) % defines::nx;
+         const int ip = (ij+ny_ + defines::ncell) % defines::nx;
+         const int jm = (ij-1 + defines::ncell) % defines::ny;
+         const int jp = (ij+1 + defines::ncell) % defines::ny;
+         fn[ij] = f[ij] +
+             + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[im] - 2*f[ij] + f[ip] )
+             + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[jm] - 2*f[ij] + f[jp]);
+         }
+     }
+ }
+
+
+//void ValuesDiffusion::
+//time_integrate(const ValuesDiffusion& valuesDiffusion) {
+//    real* fn = f_;
+//    const real* f = valuesDiffusion.f_;
+//#pragma omp parallel 
+//    {
+//#pragma omp for 
+//    for(int i=0; i<defines::nx; i++) {
+//        for(int j=0; j<defines::ny; j++) {
+//        const int im = (i-1 + defines::nx) % defines::nx;
+//        const int ip = (i+1 + defines::nx) % defines::nx;
+//        const int jm = (i-1 + defines::ny) % defines::ny;
+//        const int jp = (i+1 + defines::ny) % defines::ny;
+//        const int ij = index::index_xy(i,j);
+//        fn[ij] = f[ij] + 
+//            + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[im] - 2*f[i] + f[ip])
+//            + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[jm] - 2*f[i] + f[jp]);
+//        }
+//    }
+//}
+//}
 
 void ValuesDiffusion::
 copy_values(const ValuesDiffusion& valuesDiffusion) {

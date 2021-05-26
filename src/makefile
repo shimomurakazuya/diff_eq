@@ -1,5 +1,6 @@
 CXXFLAGS += -std=c++11 -O3 -Wall -Wextra
 LDFLAGS += -std=c++11 -lm -Wall -Wextra
+OMPFLAGS += -fopenmp
 
 .PHONY: all clean resultclean tagfiles
 
@@ -11,10 +12,10 @@ OBJS := $(SRCS:.cpp=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-		g++ -O3 -o $@ $^ $(LDFLAGS)
+		g++ -O3 -o $@ $^ $(LDFLAGS) $(OMPFLAGS)
 
 .cpp.o:
-		g++ -O3 -c $< $(CXXFLAGS)
+		g++ -O3 -c $< $(CXXFLAGS) $(OMPFLAGS)
 
 clean:
 		rm -f $(TARGET)
