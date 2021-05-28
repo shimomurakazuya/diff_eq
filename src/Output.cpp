@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -6,74 +5,99 @@
 #include <cstdlib>
 #include <cmath>
 #include <string>
+#include <math.h>
 
 #include "ValuesDiffusion.h"
-#include "Index.h"
+
 #include "defines.h"
 #include "Output.h"
 
 
 void Output::
-OutputDiffusionData(const ValuesDiffusion& v, const int t) {
+setout(const ValuesDiffusion& v, const int t) {
 
-    float f_ave,f_max;
-    f_ave = average(v);
-    f_max = maximum(v);
+    float f_ave,f_max, err_elm;
+     f_ave = average(v);
+     f_max = maximum(v);
+     err_elm = analytic(v,t);
 
-    char filename[1024];
-    sprintf(filename, "data/ascii_value_step%04d.dat",t ) ;
-    FILE* fp = fopen( filename ,"w");
-    fprintf(fp,"#t = %04d    x,   y,    f,      average, maximum \n",t  ); 
+
+    std::ostringstream oss;
+     oss << "data/ascii_value_step" << std::setfill('0') << std::right<< std::setw(4)<<  t << ".dat";
+        
+    std::ofstream ofs(oss.str());
+     ofs << "#t=" << std::setw(8) << t << "    x,    f,      average,	maximum, err_elm" << std ::endl;
 
     for(int i=0; i<defines::nx; i++) {
-        for(int j=0; j<defines::ny; j++) {
-            const int ij = index::index_xy(i,j);
-                fprintf(fp,"%8.3f %8.3f %8.8f %8.3f %8.3f\n",v.xx()[i],v.yy()[j], v.ff()[ij], f_ave, f_max ); 
-            }
-        fprintf(fp,"\n" ); 
-    }    
+     ofs << std::setw(8) << v.xx()[i] << " "
+         << std::setw(8) << v.ff()[i] << " "
+         << std::setw(8) << f_ave     << " "  
+         << std::setw(8) << f_max     << " "  
+         << std::setw(8) << err_elm     << " " << std::endl;
+    }
 
-    char filename2[1024];
-    sprintf(filename2, "data/ascii_value_step%04d_downsize%01d.dat",t,defines::downsize ) ;
-    FILE* fp2 = fopen( filename2 ,"w");
-    fprintf(fp2,"#t = %04d    x,   y,    f,      average, maximum \n",t  ); 
+    ofs.close(); 
+   
+    std::ostringstream oss2;
+     oss2 << "data/ascii_value_step" << std::setfill('0') << std::right<< std::setw(4)<< t << "_downsize"<< defines::downsize << ".dat";
 
-    for(int i=0; i<defines::nx; i+= defines::downsize) {
-        for(int j=0; j<defines::ny; j+=defines::downsize) {
-            const int ij = index::index_xy(i,j);
-                fprintf(fp2,"%8.3f %8.3f %8.8f %8.3f %8.3f\n",v.xx()[i],v.yy()[j], v.ff()[ij], f_ave, f_max ); 
-            }
-        fprintf(fp2,"\n" ); 
-    }    
+    std::ofstream ofs2(oss2.str());
+     ofs2 << "#t=" << std::setw(8) << t << "    x,    f,      average,   maximum,	downsize =" << defines::downsize << std ::endl;
+
+     for(int i=0; i<defines::nx; i+= defines::downsize) {
+     ofs2 << std::setw(8) << v.xx()[i] << " "
+          << std::setw(8) << v.ff()[i] << " "
+          << std::setw(8) << f_ave     << " "
+          << std::setw(8) << f_max     << " " << std::endl;
+     
+    }
 
 }
 
-real Output::
-average(const ValuesDiffusion& v){
-    real f_ave = 0 ;
-    for(int i=0; i<defines::ncell; i++) {
-        f_ave = f_ave + v.ff()[i]/defines::ncell;
-    }
-    return f_ave;
+float Output::
+average( const ValuesDiffusion& v){
+     real f_ave = 0 ;
+     for(int i=0; i<defines::nx; i++) {
+      f_ave = f_ave + v.ff()[i]/defines::nx;
+      }
+     return f_ave;
 }
 
-real Output::
-maximum(const ValuesDiffusion& v){
-    real f_max = 0 ;
-    for(int i=0; i<defines::ncell; i++) { 
-        f_max = std::fmax(f_max , v.ff()[i]);
-    }
-    return f_max;
+float Output::
+maximum( const ValuesDiffusion& v){
+     real f_max = 0; 
+     for(int i=0; i<defines::nx; i++) { 
+      f_max = std::fmax(f_max , v.ff()[i]);
+      }
+     return f_max;
+}
+
+
+float Output::
+analytic( const ValuesDiffusion& v,int t){
+     real f_ana = 0; 
+     real err_elm =0;
+     for(int i=0; i<defines::nx; i++) { 
+      f_ana = defines::fmax * cos(v.xx()[i]/defines::lx*2.0*M_PI) * exp(-defines::c_dif * (M_PI/defines::lx)* (M_PI/defines::lx)*double(t) * defines::dt *defines::iout  );
+      err_elm = err_elm + fabs(f_ana - v.ff()[i])/defines::nx;
+     }
+     return err_elm;
 }
 
 void Output::
-print_sum(const ValuesDiffusion& v, const int t) {
-    double sum = 0, mmm = v.ff()[0];
-    for(int i=0; i<defines::ncell; i++) {
-        sum += v.ff()[i];
-        mmm = std::fmax(mmm, v.ff()[i]);
-    }
-    std::cout << "t=" << std::setw(8) << t
-        << " :    " << std::setw(8) << sum
-        << " ,    " << std::setw(8) << mmm << std::endl;
+print_sum(const int t, const ValuesDiffusion& v) {
+     double sum = 0, mmm = v.ff()[0];
+     for(int i=0; i<defines::nx; i++) {
+         sum += v.ff()[i];
+         mmm = std::fmax(mmm, v.ff()[i]);
+     }
+     float err_elm ;
+     err_elm = analytic(v,t);
+     float Tout = t * defines::dt * defines::iout;
+
+     std::cout << "t=" << std::setw(8) << Tout
+         << " :    " << std::setw(8) << sum
+         << " :    " << std::setw(8) << mmm
+         << " ,    " << std::setw(8) << err_elm << std::endl;
 }
+

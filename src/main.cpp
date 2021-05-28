@@ -1,15 +1,11 @@
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "defines.h"
 #include "ValuesDiffusion.h"
 #include "Output.h"
 
 
 int main() {
-    ValuesDiffusion v (defines::nx,defines::ny,defines::ncell);
-    ValuesDiffusion vn(defines::nx,defines::ny,defines::ncell);
+    ValuesDiffusion v (defines::nx);
+    ValuesDiffusion vn(defines::nx);
     Output output;
 
     v .allocate_values();
@@ -18,16 +14,15 @@ int main() {
     v .init_values();
     vn.init_values();
 
-    omp_set_num_threads(defines::thread_num);
-
     // main loop
     for(int t=0; t<defines::iter; t++) {
         // output
         if(t % defines::iout == 0) {
             const int fout_step = t / defines::iout;
-            output.print_sum(v,fout_step);
-            output.OutputDiffusionData(v ,fout_step);
+            output.print_sum(fout_step,v);
+            output.setout(v ,fout_step);
         }
+         
         ValuesDiffusion::swap(&vn, &v);
         vn.time_integrate(v);
     }

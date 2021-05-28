@@ -7,8 +7,9 @@ set ylabel "f"
 
 downsize=3
 
+set yrange[0:1]
 loop_sta =0
-loop_end = 9
+loop_end = 100
 #loop_sta =10
 #loop_end = 99
 loop_skip = 1
@@ -20,14 +21,9 @@ set title "t=".sprintf("%04d",loop)
 #p "data/t=".sprintf("%02d",loop).".dat" u 1:2  w lp  lw 2
 p "data/t=".sprintf("%04d",loop).".dat" u 1:2  w lp  lw 2
 
-set output "png/fx_t".sprintf("%04d", loop).".png" 
+set output "png/downsize/fx_t".sprintf("%04d", loop)."_downsize".sprintf("%01d",downsize).".png" 
 set title "t=".sprintf("%04d",loop)
 #p "data/t=".sprintf("%02d",loop)."_downsize".sprintf("%01d",downsize).".dat" u 1:2  w lp  lw 2
 p "data/t=".sprintf("%04d",loop)."_downsize".sprintf("%01d",downsize).".dat" u 1:2  w lp  lw 2
 
-#debug
-#set output "png/fx_t50_cos.png" 
-#set title "t=50"
-#p "data/t=50.dat"  u 1:2 w lp lw 2
-#p "data/t=".sprintf("%02d",loop).".dat" u 1:2  w lp  lw 2
 }

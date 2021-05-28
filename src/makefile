@@ -1,6 +1,5 @@
 CXXFLAGS += -std=c++11 -O3 -Wall -Wextra
 LDFLAGS += -std=c++11 -lm -Wall -Wextra
-OMPFLAGS += -fopenmp
 
 .PHONY: all clean resultclean tagfiles
 
@@ -12,15 +11,14 @@ OBJS := $(SRCS:.cpp=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-		g++ -O3 -o $@ $^ $(LDFLAGS) $(OMPFLAGS)
+		g++ -O3 -o $@ $^ $(LDFLAGS)
 
 .cpp.o:
-		g++ -O3 -c $< $(CXXFLAGS) $(OMPFLAGS)
+		g++ -O3 -c $< $(CXXFLAGS)
 
 clean:
 		rm -f $(TARGET)
-			rm -f $(OBJS)	
-			rm -f data/*.dat
+			rm -f $(OBJS)
 
 retultclean:
 		find -name data/ '*.dat' | xargs rm -f 
