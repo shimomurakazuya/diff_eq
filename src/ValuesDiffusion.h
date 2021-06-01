@@ -32,7 +32,6 @@ public:
     void time_integrate(const ValuesDiffusion& valuesDiffusion);
     void print_sum(int t);
     static void swap(ValuesDiffusion* v0, ValuesDiffusion* v1);
-    int index_xy(int i, int j);
 
 private:
     void copy_values(const ValuesDiffusion& valuesDiffusion);

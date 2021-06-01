@@ -22,45 +22,45 @@ OutputDiffusionData(const ValuesDiffusion& v, const int t) {
     f_max = maximum(v);
 
     std::ostringstream oss;
-      oss << "data/ascii_value_step" << std::setfill('0') << std::right<< std::setw(4)<<  t << ".dat";
- 
-     std::ofstream ofs(oss.str());
-      ofs << "#t=" << std::setw(8) << t << "    x,    f,      average,   maximum" << std ::endl;
- 
-     for(int i=0; i<defines::nx; i++) {
-        for(int j=0; j<defines::ny; j++) {
-            const int ij = index::index_xy(i,j);
-              f_ana = defines::fmax * cos(v.xx()[i]/defines::lx*2.0*M_PI + v.yy()[j]/defines::lx*2.0*M_PI) 
-                  * exp(-defines::c_dif * ((2.0 * M_PI/defines::lx)* (2.0*M_PI/defines::lx) + (2.0 * M_PI/defines::lx)* (2.0*M_PI/defines::lx) )* t * defines::dt *defines::iout  );
+    oss << "data/ascii_value_step" << std::setfill('0') << std::right<< std::setw(4)<<  t << ".dat";
+
+    std::ofstream ofs(oss.str());
+    ofs << "#t=" << std::setw(8) << t << "    x,    f,      average,   maximum" << std ::endl;
+
+    for(int j=0; j<defines::ny; j++) {
+        for(int i=0; i<defines::nx; i++) {
+            const int ji = index::index_xy(i,j);
+            f_ana = defines::fmax * cos(v.xx()[i]/defines::lx*2.0*M_PI + v.yy()[j]/defines::lx*2.0*M_PI) 
+                * exp(-defines::c_dif * ((2.0 * M_PI/defines::lx)* (2.0*M_PI/defines::lx) + (2.0 * M_PI/defines::lx)* (2.0*M_PI/defines::lx) )* t * defines::dt *defines::iout  );
             ofs << std::setw(8) << v.xx()[i] << " "
                 << std::setw(8) << v.yy()[j] << " "
-                << std::setw(8) << v.ff()[ij] << " "
+                << std::setw(8) << v.ff()[ji] << " "
                 << std::setw(8) << f_ana     << " "
                 << std::setw(8) << f_ave     << " "
                 << std::setw(8) << f_max     << " " << std::endl;
-     }
+        }
         ofs << std::endl;
-     }
+    }
 
 
-        
+
     std::ostringstream oss2;
-      oss2 << "data/ascii_value_step" << std::setfill('0') << std::right<< std::setw(4)<< t << "_downsize"<< defines::downsize << ".dat";
- 
-     std::ofstream ofs2(oss2.str());
-      ofs2 << "#t=" << std::setw(8) << t << "    x,    f,      average,   maximum,   downsize =" << defines::downsize << std ::endl;
- 
-      for(int i=0; i<defines::nx; i+= defines::downsize) {
-        for(int j=0; j<defines::ny; j+= defines::downsize) {
-            const int ij = index::index_xy(i,j);
+    oss2 << "data/ascii_value_step" << std::setfill('0') << std::right<< std::setw(4)<< t << "_downsize"<< defines::downsize << ".dat";
+
+    std::ofstream ofs2(oss2.str());
+    ofs2 << "#t=" << std::setw(8) << t << "    x,    f,      average,   maximum,   downsize =" << defines::downsize << std ::endl;
+
+    for(int j=0; j<defines::ny; j+= defines::downsize) {
+        for(int i=0; i<defines::nx; i+= defines::downsize) {
+            const int ji = index::index_xy(i,j);
             ofs2 << std::setw(8) << v.xx()[i] << " "
                 << std::setw(8) << v.yy()[j] << " "
-                << std::setw(8) << v.ff()[ij] << " "
+                << std::setw(8) << v.ff()[ji] << " "
                 << std::setw(8) << f_ave     << " "
                 << std::setw(8) << f_max     << " " << std::endl;
- 
-      } 
-      }
+
+        } 
+    }
 }
 
 
@@ -83,18 +83,18 @@ maximum(const ValuesDiffusion& v){
 }
 
 real Output::
- analytic( const ValuesDiffusion& v,int t){
-      real f_ana = 0;
-      real err_elm =0;
-      for(int i=0; i<defines::nx; i++) {
-          for(int j=0; j<defines::nx; j++) {
-              const int ij = index::index_xy(i,j);
-              f_ana = defines::fmax * cos(v.xx()[i]/defines::lx*2.0*M_PI + v.yy()[j]/defines::lx*2.0*M_PI) 
-                  * exp(-defines::c_dif * ((2.0 * M_PI/defines::lx)* (2.0*M_PI/defines::lx) + (2.0 * M_PI/defines::lx)* (2.0*M_PI/defines::lx) )* t * defines::dt *defines::iout  );
-                  err_elm = err_elm + fabs(f_ana - v.ff()[ij])/defines::ncell;
-                  }
-                  }
-                  return err_elm;
+analytic( const ValuesDiffusion& v,int t){
+    real f_ana = 0;
+    real err_elm =0;
+    for(int j=0; j<defines::nx; j++) {
+        for(int i=0; i<defines::nx; i++) {
+            const int ji = index::index_xy(i,j);
+            f_ana = defines::fmax * cos(v.xx()[i]/defines::lx*2.0*M_PI + v.yy()[j]/defines::lx*2.0*M_PI) 
+                * exp(-defines::c_dif * ((2.0 * M_PI/defines::lx)* (2.0*M_PI/defines::lx) + (2.0 * M_PI/defines::lx)* (2.0*M_PI/defines::lx) )* t * defines::dt *defines::iout  );
+            err_elm = err_elm + fabs(f_ana - v.ff()[ji])/defines::ncell;
+        }
+    }
+    return err_elm;
 }
 
 

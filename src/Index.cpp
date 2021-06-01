@@ -3,7 +3,7 @@
 
 namespace index{
     int index_xy(int  i , int j){
-        return  ( j + defines::ny* i );
+        return  ( i + defines::nx* j );
 }
 };
 
