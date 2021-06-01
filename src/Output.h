@@ -2,15 +2,18 @@
 #define OUTPUT_H_
 
 #include "ValuesDiffusion.h"
+#include "Index.h"
 
 class Output{
-public   :
-      void setout(const ValuesDiffusion& v, int t);
-      float average(const ValuesDiffusion& v);
-      float maximum(const ValuesDiffusion& v);
-      float analytic(const ValuesDiffusion& v, int t);
-      void  print_sum(const int t, const ValuesDiffusion& v);
+private  :
+      real* f_ave__;
 
+public   :
+      void OutputDiffusionData( const ValuesDiffusion& v, int t);
+      real average(const ValuesDiffusion& v);
+      real maximum(const ValuesDiffusion& v);
+      real analytic(const ValuesDiffusion& v,int t);
+      void print_sum(const ValuesDiffusion& v, int t);
 
 };
 #endif    
