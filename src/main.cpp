@@ -1,3 +1,7 @@
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include "defines.h"
 #include "ValuesDiffusion.h"
 #include "Output.h"
@@ -7,12 +11,17 @@ int main() {
     ValuesDiffusion v (defines::nx,defines::ny,defines::ncell);
     ValuesDiffusion vn(defines::nx,defines::ny,defines::ncell);
     Output output;
+    real st_time, ed_time;
 
     v .allocate_values();
     vn.allocate_values();
 
     v .init_values();
     vn.init_values();
+
+    omp_set_num_threads(defines::thread_num);
+
+   st_time=omp_get_wtime();
 
     // main loop
     for(int t=0; t<defines::iter; t++) {
@@ -24,7 +33,8 @@ int main() {
         }
         ValuesDiffusion::swap(&vn, &v);
         vn.time_integrate(v);
-//        output.print_sum(vn,t);
     }
-
+    ed_time=omp_get_wtime();
+       output.print_elapsetime(st_time,ed_time);
+    
 }
