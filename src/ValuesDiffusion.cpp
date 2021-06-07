@@ -39,7 +39,8 @@ init_values() {
                 x_[i] = xi;
                 const int ji = index::index_xy(i, j);
                 //f_[ji] = defines::fmax * std::exp( - (xi*xi + yi*yi ));
-                f_[ji] = defines::fmax * cos(xi/defines::lx*2.0*defines::pi)*cos(yi/defines::lx*2.0*defines::pi) ;
+                f_[ji] = defines::fmax * cos(xi/defines::lx*2.0*M_PI + yi/defines::lx*2.0*M_PI);
+                //f_[ji] = defines::fmax * cos(xi/defines::lx*2.0*defines::pi)*cos(yi/defines::lx*2.0*defines::pi) ;
             }
         }
     }
@@ -59,15 +60,14 @@ time_integrate(const ValuesDiffusion& valuesDiffusion) {
                 const int im = (i-1 + defines::nx) % defines::nx;
                 const int ip = (i+1 + defines::nx) % defines::nx;
 
-                const int ji = index::index_xy(i,j);
+                const int ji  = index::index_xy(i,j);
                 const int jim = index::index_xy(im,j);
                 const int jip = index::index_xy(ip,j);
                 const int jim2 = index::index_xy(i,jm);
                 const int jip2 = index::index_xy(i,jp);
 
-                fn[ji] = f[ji] +
-                    + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[jim] - 2*f[ji] + f[jip] )
-                    + defines::c_dif * defines::dt / defines::dx / defines::dx * (f[jim2] - 2*f[ji] + f[jip2] );
+                fn[ji] = f[ji] 
+                    + defines::coef_diff * (f[jim] - 4*f[ji] + f[jip] + f[jim2] + f[jip2] );
             }
         }
     }

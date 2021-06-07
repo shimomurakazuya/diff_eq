@@ -73,15 +73,26 @@ print_sum(const ValuesDiffusion& v, const int t) {
         mmm = std::fmax(mmm, v.ff()[i]);
     }
     std::cout << "t=" << std::setw(8) << t
-        << " :    " << std::setw(8) << sum
-        << " ,    " << std::setw(8) << mmm << std::endl;
+       << " :    " << std::setw(8) << sum
+       << " ,    " << std::setw(8) << mmm << std::endl;
+}
+void Output::
+print_elapsetime(const double st_time,const double ed_time, const double ave_time){
+    double elapse_time;
+    elapse_time = ed_time - st_time;    
+    std:: cout << "elapse time = " << std::setw(8) << elapse_time
+        << "elapse time loop avetage  = " << std::setw(8) << ave_time
+        << std::endl; 
 }
 
+
 void Output::
-print_elapsetime(const double sttime,const double edtime){
+print_elapsetime_loop(const double st_time,const double ed_time){
     double elapse_time;
-    elapse_time = edtime - sttime; 
-    std:: cout << "elapse time = " << std::setw(8) << elapse_time
+    elapse_time = ed_time - st_time; 
+
+    std::cout << "elapse time loop = " << std::setw(8) << elapse_time << std::endl
+        << "number_thread = " << std::setw(8) <<defines::thread_num
         << std::endl; 
 }
 
