@@ -14,7 +14,7 @@ using real  = double;
 namespace defines {
     // x, t
     //    constexpr real dx = 1.0;
-    constexpr int nx = 100000000;
+    constexpr int nx = 10000000;
     //    constexpr int nc = nx / 2;
     //constexpr real lx = nx - 1;
     constexpr int iter = 100;
@@ -27,6 +27,14 @@ namespace defines {
     constexpr real c_dif = 3;
     constexpr int thread_num = 24;
 };
+
+//real* allocate() {
+//    return (real*)std::malloc(defines::nx * sizeof(real));
+//}
+//
+//void deallocate(real* f) {
+//    std::free(f);
+//}
 
 void init(real* f, real* x) {
 #pragma omp parallel for
@@ -43,8 +51,24 @@ void time_integrate(real* fn, const real* f, const real* x) {
     }
 }
 
+//void print_sum(const int t, const real* f) {
+//    double sum = 0, mmm = f[0];
+//    for(int i=0; i<defines::nx; i++) {
+//        sum += f[i];
+//        mmm = std::fmax(mmm, f[i]);
+//    }
+//    std::cout << "t=" << std::setw(8) << t 
+//        << " :    " << std::setw(8) << sum 
+//        << " ,    " << std::setw(8) << mmm << std::endl;
+//
+//}
+
 
 int main() {
+//    real* f  = allocate();
+//    real* fn = allocate();
+//    real* x  = allocate();
+//    real* xn = allocate();
     real f[defines::nx] ;
     real fn[defines::nx];
     real x[defines::nx] ;
@@ -66,6 +90,9 @@ int main() {
         ave_tloop = ave_tloop + tloop/defines::iter; 
 
         printf("sec=%lf \n",tloop);
+       // std::cout << "sec=" << tloop  << std::endl;
     }
         printf("seci_ave=%lf \n",ave_tloop);
+    //std::cout << "sec_ave=" << ave_tloop << std::endl;
+
 }
