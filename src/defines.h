@@ -7,14 +7,16 @@ namespace defines {
     // x, t
 //    constexpr real dx = 4.0;
     constexpr real lx = 1.0;
-    constexpr int nx = 10000;
-    constexpr int ny = 10000;
+//    constexpr int nx = 20000;
+//    constexpr int ny = 10000;
+    constexpr int nx = 2000000;
+    constexpr int ny =100;
     constexpr int ncell = nx*ny;
     constexpr int ncx = nx / 2;
     constexpr int ncy = ny / 2;
     constexpr real dx = lx / nx;
     //constexpr real lx = nx - 1;
-    constexpr int iter = 100;
+    constexpr int iter = 50;
     constexpr int iout = 10;
 
     // diffusion
@@ -26,7 +28,7 @@ namespace defines {
     constexpr real coef_diff= c_dif * dt /dx / dx; 
 
     // downsize
-    constexpr int downsize = 3;
+    constexpr int downsize = 50;
     
     // 
     constexpr int thread_num = 4;

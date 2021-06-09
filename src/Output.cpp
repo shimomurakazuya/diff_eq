@@ -1,3 +1,7 @@
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+    
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -66,23 +70,34 @@ maximum(const ValuesDiffusion& v){
 }
 
 void Output::
+parameter(){
+
+#pragma omp single  
+    printf("nx = %d, ny= %d, iter = %d, \n dx = %lf, nthread = %d, nthread_max = %d", defines::nx, defines::ny, defines::iter, defines::dx, defines::thread_num, omp_get_max_threads());
+    //printf("nx = %d, ny= %d, iter = %d, \n dx = %lf, nthread = %d", defines::nx, defines::ny, defines::iter, defines::dx, defines::thread_num);
+
+}
+
+void Output::
 print_sum(const ValuesDiffusion& v, const int t) {
     double sum = 0, mmm = v.ff()[0];
     for(int i=0; i<defines::ncell; i++) {
         sum += v.ff()[i];
         mmm = std::fmax(mmm, v.ff()[i]);
     }
-    std::cout << "t=" << std::setw(8) << t
-       << " :    " << std::setw(8) << sum
-       << " ,    " << std::setw(8) << mmm << std::endl;
+//    printf ("    Expected a(1): %f %f %f \n",aj,bj,cj);
+//    std::cout << "t=" << std::setw(8) << t
+//       << " :    " << std::setw(8) << sum
+//       << " ,    " << std::setw(8) << mmm << std::endl;
 }
 void Output::
 print_elapsetime(const double st_time,const double ed_time, const double ave_time){
     double elapse_time;
     elapse_time = ed_time - st_time;    
-    std:: cout << "elapse time = " << std::setw(8) << elapse_time
-        << "elapse time loop avetage  = " << std::setw(8) << ave_time
-        << std::endl; 
+    printf ("    elapse time = %lf \n ave time = %lf \n number_thread = %d \n",elapse_time,ave_time, defines::thread_num);
+//    std:: cout << "elapse time = " << std::setw(8) << elapse_time
+//        << "elapse time loop avetage  = " << std::setw(8) << ave_time
+//        << std::endl; 
 }
 
 
@@ -91,9 +106,10 @@ print_elapsetime_loop(const double st_time,const double ed_time){
     double elapse_time;
     elapse_time = ed_time - st_time; 
 
-    std::cout << "elapse time loop = " << std::setw(8) << elapse_time << std::endl
-        << "number_thread = " << std::setw(8) <<defines::thread_num
-        << std::endl; 
+    printf ("    elapse time loop = %lf \n ",elapse_time);
+//    std::cout << "elapse time loop = " << std::setw(8) << elapse_time << std::endl
+//        << "number_thread = " << std::setw(8) <<defines::thread_num
+//        << std::endl; 
 }
 
 

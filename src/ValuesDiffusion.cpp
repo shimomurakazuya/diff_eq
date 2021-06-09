@@ -28,9 +28,10 @@ deallocate_values() {
 
 void ValuesDiffusion::
 init_values() {
-#pragma omp parallel
+//#pragma omp parallel private(x_,y_) 
+#pragma omp parallel 
     { 
-#pragma omp for 
+#pragma omp for  
         for (int j=0; j<ny_; j++){
             const real yi = (j - defines::ncy) *  defines::dx; 
             y_[j] = yi;
@@ -50,7 +51,8 @@ void ValuesDiffusion::
 time_integrate(const ValuesDiffusion& valuesDiffusion) {
     real* fn = f_;
     const real* f = valuesDiffusion.f_;
-#pragma omp parallel
+#pragma omp parallel  
+//#pragma omp parallel private(fn) 
     { 
 #pragma omp for 
         for(int j=0; j<defines::ny; j++) {
