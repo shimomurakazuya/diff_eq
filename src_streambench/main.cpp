@@ -13,67 +13,70 @@
 using real  = double;
 namespace defines {
     // x, t
-    //    constexpr real dx = 1.0;
-    constexpr int nx = 10000000;
-    //    constexpr int nc = nx / 2;
-    //constexpr real lx = nx - 1;
+        constexpr real lx = 1.0;
+    constexpr int nx = 100000000;
+    constexpr int ncx = nx / 2;
+    constexpr real dx = lx/ nx;
     constexpr int iter = 100;
-    //    constexpr int iout = 100;
-    //    constexpr real dt = 0.001; // torima
+    constexpr int iout = 10;
 
     // diffusion
-    //    constexpr real fmax = 1;
-    //    constexpr real delta = 4 * dx; // 4 dx
     constexpr real c_dif = 3;
     constexpr int thread_num = 24;
+    constexpr int data_num = 2;
 };
 
-//real* allocate() {
-//    return (real*)std::malloc(defines::nx * sizeof(real));
-//}
-//
-//void deallocate(real* f) {
-//    std::free(f);
-//}
+namespace index{
+    int index_xy(int  i , int j){
+        return  ( i + defines::nx* j );
+    }
+};
+
+
+real* allocate() {
+    return (real*)std::malloc(defines::nx * sizeof(real));
+}
+
+void deallocate(real* f) {
+    std::free(f);
+}
+
 
 void init(real* f, real* x) {
 #pragma omp parallel for
     for(int i=0; i<defines::nx; i++) {
-        x[i] =4.0;
-        f[i] = 2.0;
+        const real xi = (i - defines::ncx) *  defines::dx;
+        x[i] =xi;
+         f[i] = 2.0;
     }
 }
 
-void time_integrate(real* fn, const real* f, const real* x) {
-#pragma omp parallel for
-    for(int i=0; i<defines::nx; i++) {
-        fn[i] = f[i] + defines::c_dif * x[i];
+void time_integrate(real* fn, const real* f) {
+    int im, ip;
+#pragma omp parallel for private(im,ip) 
+    for(int i=0; i<defines::nx; i++) { 
+          im = (i-1 + defines::nx) % defines::nx;  
+          ip = (i+1 + defines::nx) % defines::nx;  
+        fn[i] = f[i] + defines::c_dif * (f[ip] - 2.0* f[i] + f[im]);
     }
+}   
+
+void output_bw(const double ave_tloop_min){
+    double bw ; 
+    bw = 1e-09 * defines::data_num *8.0 * defines::nx/ave_tloop_min;  
+    std::cout << "sec_min(s)=" << ave_tloop_min  << std::endl
+        << "band_width(GB/s)=" << bw <<std::endl ;
+
+
 }
-
-//void print_sum(const int t, const real* f) {
-//    double sum = 0, mmm = f[0];
-//    for(int i=0; i<defines::nx; i++) {
-//        sum += f[i];
-//        mmm = std::fmax(mmm, f[i]);
-//    }
-//    std::cout << "t=" << std::setw(8) << t 
-//        << " :    " << std::setw(8) << sum 
-//        << " ,    " << std::setw(8) << mmm << std::endl;
-//
-//}
-
 
 int main() {
-//    real* f  = allocate();
-//    real* fn = allocate();
-//    real* x  = allocate();
-//    real* xn = allocate();
-    real f[defines::nx] ;
-    real fn[defines::nx];
-    real x[defines::nx] ;
-    real xn[defines::nx];
-    real st_tloop, ed_tloop, ave_tloop=0, tloop=0;
+    real* f  = allocate();
+    real* fn = allocate();
+    real* x  = allocate();
+    real* xn = allocate();
+    real st_tloop, ed_tloop, ave_tloop=100, ave_tloop_min=100,tloop;
+
 
     omp_set_num_threads(defines::thread_num);
     init(f , x );
@@ -82,17 +85,21 @@ int main() {
     // main loop
     for(int t=0; t<defines::iter; t++) {
         // output
+        if(t % (defines::iout) == 0) {
+            printf("sec_ave=%lf \n",ave_tloop);
+            ave_tloop_min = std::min(ave_tloop_min, ave_tloop);
+            printf("sec_min=%lf \n",ave_tloop_min);
+            ave_tloop =0; 
+        }
 
         st_tloop=omp_get_wtime();
-        time_integrate(fn,f,x);
+        time_integrate(fn,f);
         ed_tloop=omp_get_wtime();
-        tloop = ed_tloop-st_tloop;
-        ave_tloop = ave_tloop + tloop/defines::iter; 
 
+        tloop = ed_tloop-st_tloop;
+        ave_tloop = ave_tloop + tloop/defines::iout; 
         printf("sec=%lf \n",tloop);
-       // std::cout << "sec=" << tloop  << std::endl;
     }
-        printf("seci_ave=%lf \n",ave_tloop);
-    //std::cout << "sec_ave=" << ave_tloop << std::endl;
+    output_bw(ave_tloop_min);
 
 }
