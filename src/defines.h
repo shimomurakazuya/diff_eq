@@ -9,8 +9,10 @@ namespace defines {
     constexpr real lx = 1.0;
 //    constexpr int nx = 20000;
 //    constexpr int ny = 10000;
-    constexpr int nx = 2000000;
-    constexpr int ny =100;
+//    constexpr int nx = 2000000;
+//    constexpr int ny =100;
+    constexpr int nx = 6144;
+    constexpr int ny = 6144 ;
     constexpr int ncell = nx*ny;
     constexpr int ncx = nx / 2;
     constexpr int ncy = ny / 2;
@@ -31,7 +33,10 @@ namespace defines {
     constexpr int downsize = 50;
     
     // 
-    constexpr int thread_num = 4;
+    constexpr int data_num   = 2;
+    constexpr int flop_num   = 7;
+    constexpr int thread_num = 24;
+    constexpr int loof_line    = 140 * defines::flop_num/(8*data_num); 
 
 };
 

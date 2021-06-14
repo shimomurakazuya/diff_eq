@@ -11,14 +11,15 @@ OBJS := $(SRCS:.cpp=.o)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-		icpc -O3 -xCORE-AVX512 -o $@ $^ $(LDFLAGS) -qopenmp
-####icpc -O2 -xCORE-AVX2  -o $@ $^ $(LDFLAGS) -qopenmp
+  $(TARGET): $(OBJS)
+	g++ -O3 -o $@ $^ $(LDFLAGS) $(OMPFLAGS)
+#gcc -O3 -o $@ $^ $(LDFLAGS)
 
 .cpp.o:
-		icpc -O3 -xCORE-AVX512  -c $< $(CXXFLAGS) -qopenmp
-###icpc -O2 -xCORE-AVX2  -c $< $(CXXFLAGS) -qopenmp
-	
+	g++ -O3 -c $< $(CXXFLAGS) $(OMPFLAGS)
+#gcc -O3 -c $< $(CXXFLAGS)
+
+
 
 clean:
 		rm -f $(TARGET)

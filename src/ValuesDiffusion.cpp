@@ -52,13 +52,13 @@ time_integrate(const ValuesDiffusion& valuesDiffusion) {
     real* fn = f_;
     const real* f = valuesDiffusion.f_;
 #pragma omp parallel  
-//#pragma omp parallel private(fn) 
     { 
-#pragma omp for 
+#pragma omp for schedule(static,1)
         for(int j=0; j<defines::ny; j++) {
                 const int jm = (j-1 + defines::ny) % defines::ny;
                 const int jp = (j+1 + defines::ny) % defines::ny;
-            for(int i=0; i<defines::nx; i++) {
+//#pragma ivdep
+                for(int i=0; i<defines::nx; i++) {
                 const int im = (i-1 + defines::nx) % defines::nx;
                 const int ip = (i+1 + defines::nx) % defines::nx;
 
