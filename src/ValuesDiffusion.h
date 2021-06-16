@@ -8,6 +8,7 @@ class ValuesDiffusion {
 private:
     real* x_;
     real* y_;
+ //   real* f_ =  aligned_alloc( defines::alignment, ncell_*sizeof(real));
     real* f_;
     const int nx_;
     const int ny_;
@@ -32,6 +33,11 @@ public:
     void time_integrate(const ValuesDiffusion& valuesDiffusion);
     void print_sum(int t);
     static void swap(ValuesDiffusion* v0, ValuesDiffusion* v1);
+    
+    __GLOBAL__ 
+        void DiffusionEq(const real* fn, const real* f); 
+
+
 
 private:
     void copy_values(const ValuesDiffusion& valuesDiffusion);

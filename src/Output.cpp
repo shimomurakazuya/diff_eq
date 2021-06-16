@@ -1,6 +1,6 @@
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+//#ifdef _OPENMP
+//#include <omp.h>
+//#endif
     
 #include <iostream>
 #include <fstream>
@@ -78,18 +78,18 @@ parameter(){
 
 }
 
-//void Output::
-//print_sum(const ValuesDiffusion& v, const int t) {
-//    double sum = 0, mmm = v.ff()[0];
-//    for(int i=0; i<defines::ncell; i++) {
-//        sum += v.ff()[i];
-//        mmm = std::fmax(mmm, v.ff()[i]);
-//    }
+void Output::
+print_sum(const ValuesDiffusion& v, const int t) {
+    double sum = 0, mmm = v.ff()[0];
+    for(int i=0; i<defines::ncell; i++) {
+        sum += v.ff()[i];
+        mmm = std::fmax(mmm, v.ff()[i]);
+    }
 //    printf ("    Expected a(1): %f %f %f \n",aj,bj,cj);
 //    std::cout << "t=" << std::setw(8) << t
 //       << " :    " << std::setw(8) << sum
 //       << " ,    " << std::setw(8) << mmm << std::endl;
-//}
+}
 
 void Output::
 print_elapsetime(const double st_time,const double ed_time, const double ave_time){
@@ -99,7 +99,8 @@ print_elapsetime(const double st_time,const double ed_time, const double ave_tim
     bw = 1e-09* defines::data_num * 8 * defines::ncell / ave_time;
     gf = 1e-09* defines::flop_num * defines::ncell / ave_time;    
     cal_ratio = gf/ defines::loof_line;
-//    printf ("    elapse time = %lf \n ave time = %lf \n number_thread = %d \n",elapse_time,ave_time, defines::thread_num);
+
+    //    printf ("    elapse time = %lf \n ave time = %lf \n number_thread = %d \n",elapse_time,ave_time, defines::thread_num);
     std:: cout << "elapse time = " << std::setw(8) << elapse_time
         << ", elapse time loop avetage  = " << std::setw(8) << ave_time << std::endl
         << "thread_num =" << defines::thread_num << ",  peak Flops = "  <<defines::loof_line  << std::endl

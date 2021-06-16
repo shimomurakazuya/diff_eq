@@ -1,6 +1,16 @@
-CXXFLAGS += -std=c++11 -O3 -Wall -Wextra
-LDFLAGS += -std=c++11 -lm -Wall -Wextra
-OMPFLAGS += -fopenmp
+#CXXFLAGS += -std=c++17 -O3 -Wall -Wextra
+#LDFLAGS  += -std=c++17 -lm -Wall -Wextra
+CXXFLAGS += -std=c++17 -O3  
+LDFLAGS  += -std=c++17 -lm  
+#OMPFLAGS += -fopenmp
+#NVCFLAGS += -g -O3 -std=c++11 -restrict
+##NVCFLAGS += --expt-extended-lambda
+##NVCFLAGS += -use_fast_math
+##NVCFLAGS += --default-stream per-thread
+#NVCFLAGS += -Xptxas -v -lineinfo
+#NVCFLAGS += -maxrregcount 127
+NVCFLAGS += --nvlink-options -Werror
+
 
 .PHONY: all clean resultclean tagfiles
 
@@ -12,13 +22,11 @@ OBJS := $(SRCS:.cpp=.o)
 all: $(TARGET)
 
   $(TARGET): $(OBJS)
-	g++ -O3 -o $@ $^ $(LDFLAGS) $(OMPFLAGS)
-#gcc -O3 -o $@ $^ $(LDFLAGS)
+	nvcc -O3 -o  $@ $^ $(LDFLAGS) $(OMPFLAGS) $(NVCFLAGS)
+
 
 .cpp.o:
-	g++ -O3 -c $< $(CXXFLAGS) $(OMPFLAGS)
-#gcc -O3 -c $< $(CXXFLAGS)
-
+	nvcc -O3 -c  $< $(CXXFLAGS) $(OMPFLAGS) $(NVCFLAGS)
 
 
 clean:
