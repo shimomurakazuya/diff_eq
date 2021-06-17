@@ -74,30 +74,6 @@ init_values() {
 //    }
 }
 
-//__global__  void ValuesDiffusion::
-//DiffusionEq(const real* fn, const real* f){
-//
-//    //        for(int j=0; j<defines::ny; j++) {
-//    const int j = blockIdx.y*blockDim.y + threadIdx.y;                                                   
-//    const int jm = (j-1 + defines::ny) % defines::ny;
-//    const int jp = (j+1 + defines::ny) % defines::ny;
-//    //            for(int i=0; i<defines::nx; i++) {
-//    const int i = blockIdx.x*blockDim.x + threadIdx.x;                                                   
-//    const int im = (i-1 + defines::nx) % defines::nx;
-//    const int ip = (i+1 + defines::nx) % defines::nx;
-//
-//    const int ji  = index::index_xy(i,j);
-//    const int jim = index::index_xy(im,j);
-//    const int jip = index::index_xy(ip,j);
-//    const int jim2 = index::index_xy(i,jm);
-//    const int jip2 = index::index_xy(i,jp);
-//
-//    fn[ji] = f[ji] 
-//        + defines::coef_diff * (f[jim] - 4*f[ji] + f[jip] + f[jim2] + f[jip2] );
-//
-//
-//}
-
 void ValuesDiffusion::
 time_integrate(const ValuesDiffusion& valuesDiffusion) {
     real* fn = f_;
@@ -121,36 +97,6 @@ time_integrate(const ValuesDiffusion& valuesDiffusion) {
     cudaFree(d_fn);
 
 }
-
-
-//void ValuesDiffusion::
-//time_integrate(const ValuesDiffusion& valuesDiffusion) {
-//    real* fn = f_;
-//    const real* f = valuesDiffusion.f_;
-//#pragma omp parallel  
-//    { 
-//        //#pragma omp for schedule(static,8) 
-//#pragma omp for 
-//        for(int j=0; j<defines::ny; j++) {
-//            const int jm = (j-1 + defines::ny) % defines::ny;
-//            const int jp = (j+1 + defines::ny) % defines::ny;
-//#pragma GCC ivdep
-//            for(int i=0; i<defines::nx; i++) {
-//                const int im = (i-1 + defines::nx) % defines::nx;
-//                const int ip = (i+1 + defines::nx) % defines::nx;
-//
-//                const int ji  = index::index_xy(i,j);
-//                const int jim = index::index_xy(im,j);
-//                const int jip = index::index_xy(ip,j);
-//                const int jim2 = index::index_xy(i,jm);
-//                const int jip2 = index::index_xy(i,jp);
-//
-//                fn[ji] = f[ji] 
-//                    + defines::coef_diff * (f[jim] - 4*f[ji] + f[jip] + f[jim2] + f[jip2] );
-//            }
-//        }
-//    }
-//}
 
 void ValuesDiffusion::
 copy_values(const ValuesDiffusion& valuesDiffusion) {
