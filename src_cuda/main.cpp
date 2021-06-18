@@ -14,17 +14,20 @@
 
 
 int main() {
+   printf("0");
     ValuesDiffusion v (defines::nx,defines::ny,defines::ncell);
     ValuesDiffusion vn(defines::nx,defines::ny,defines::ncell);
     Output output;
 //    real st_time, ed_time;
 //    real st_tloop, ed_tloop,ave_tloop=10,ave_tloop_min=10;
-
+   printf("1");
     v .allocate_values();
     vn.allocate_values();
+   printf("2");
 
     v .init_values();
     vn.init_values();
+   printf("3");
 
     output.parameter();
 //    omp_set_num_threads(defines::thread_num);

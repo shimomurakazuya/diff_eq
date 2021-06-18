@@ -3,11 +3,11 @@ CXX := nvcc
 CXXFLAGS := -x cu
 CXXFLAGS += -arch=sm_70 # sm_70 == Volta generation
 CXXFLAGS += -use_fast_math
-CXXFLAGS += -std=c++17 -O3 -Xcompiler="-Wall -Wextra"
+CXXFLAGS += -std=c++11 -O3 -Xcompiler="-Wall -Wextra"
 #CXXFLAGS += -Xcompiler="-fopenmp"
 
 LD := $(CXX)
-LDFLAGS := -std=c++17 -lm
+LDFLAGS := -std=c++11 -lm
 #LDFLAGS += -Xcompiler="-fopenmp"
 
 .PHONY: all clean resultclean tagfiles
