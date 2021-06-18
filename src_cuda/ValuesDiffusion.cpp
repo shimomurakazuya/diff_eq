@@ -16,7 +16,7 @@
 
 namespace  kernel{
 
-    __global__  void DiffusionEq(const real* fn, const real* f){
+    __global__  void DiffusionEq(real* fn, const real* f){
 
      //        for(int j=0; j<defines::ny; j++) {
      const int j = blockIdx.y*blockDim.y + threadIdx.y;
@@ -27,11 +27,11 @@ namespace  kernel{
      const int im = (i-1 + defines::nx) % defines::nx;
      const int ip = (i+1 + defines::nx) % defines::nx;
  
-     const int ji  = index::index_xy(i,j);
-     const int jim = index::index_xy(im,j);
-     const int jip = index::index_xy(ip,j);
-     const int jim2 = index::index_xy(i,jm);
-     const int jip2 = index::index_xy(i,jp);
+     const int ji  = Index::index_xy(i,j);
+     const int jim = Index::index_xy(im,j);
+     const int jip = Index::index_xy(ip,j);
+     const int jim2 = Index::index_xy(i,jm);
+     const int jip2 = Index::index_xy(i,jp);
  
      fn[ji] = f[ji]
          + defines::coef_diff * (f[jim] - 4*f[ji] + f[jip] + f[jim2] + f[jip2] );
@@ -65,7 +65,7 @@ init_values() {
             for(int i=0; i<nx_; i++) {
                 const real xi = (i - defines::ncx) *  defines::dx; 
                 x_[i] = xi;
-                const int ji = index::index_xy(i, j);
+                const int ji = Index::index_xy(i, j);
                 //f_[ji] = defines::fmax * std::exp( - (xi*xi + yi*yi ));
                 f_[ji] = defines::fmax * cos(xi/defines::lx*2.0*M_PI + yi/defines::lx*2.0*M_PI);
                 //f_[ji] = defines::fmax * cos(xi/defines::lx*2.0*defines::pi)*cos(yi/defines::lx*2.0*defines::pi) ;
@@ -78,7 +78,7 @@ void ValuesDiffusion::
 time_integrate(const ValuesDiffusion& valuesDiffusion) {
     real* fn = f_;
     const real* f = valuesDiffusion.f_;
-    real* d_f, d_fn;  
+    real *d_f, *d_fn;  
 
     cudaMalloc(&d_f ,defines::ncell*sizeof(real));
     cudaMalloc(&d_fn,defines::ncell*sizeof(real));

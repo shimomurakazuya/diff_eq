@@ -30,7 +30,7 @@ OutputDiffusionData(const ValuesDiffusion& v, const int t) {
 
     for(int j=0; j<defines::ny; j++) {
         for(int i=0; i<defines::nx; i++) {
-            const int ji = index::index_xy(i,j);
+            const int ji = Index::index_xy(i,j);
             fprintf(fp,"%8.3f %8.3f %8.8f %8.3f %8.3f\n",v.xx()[i],v.yy()[j], v.ff()[ji], f_ave, f_max ); 
         }
         fprintf(fp,"\n" ); 
@@ -43,7 +43,7 @@ OutputDiffusionData(const ValuesDiffusion& v, const int t) {
 
     for(int j=0; j<defines::ny; j+=defines::downsize) {
         for(int i=0; i<defines::nx; i+= defines::downsize) {
-            const int ji = index::index_xy(i,j);
+            const int ji = Index::index_xy(i,j);
             fprintf(fp2,"%8.3f %8.3f %8.8f %8.3f %8.3f\n",v.xx()[i],v.yy()[j], v.ff()[ji], f_ave, f_max ); 
         }
         fprintf(fp2,"\n" ); 
