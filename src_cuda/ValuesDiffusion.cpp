@@ -13,6 +13,7 @@
 #include "ValuesDiffusion.h"
 #include "Index.h"
 #include "defines.h"
+<<<<<<< HEAD
 #include "Kernel.h"
 
 //namespace  kernel{
@@ -38,6 +39,35 @@
 //         + defines::coef_diff * (f[jim] - 4*f[ji] + f[jip] + f[jim2] + f[jip2] );
 //};
 //};
+=======
+#include <cuda.h>
+
+namespace  kernel{
+
+    __global__  void DiffusionEq(real* fn, const real* f){
+
+     //        for(int j=0; j<defines::ny; j++) {
+     const int j = blockIdx.y*blockDim.y + threadIdx.y;
+     const int jm = (j-1 + defines::ny) % defines::ny;
+     const int jp = (j+1 + defines::ny) % defines::ny;
+     //            for(int i=0; i<defines::nx; i++) {
+     const int i = blockIdx.x*blockDim.x + threadIdx.x;
+     const int im = (i-1 + defines::nx) % defines::nx;
+     const int ip = (i+1 + defines::nx) % defines::nx;
+ 
+     const int ji  = Index::index_xy(i,j);
+     const int jim = Index::index_xy(im,j);
+     const int jip = Index::index_xy(ip,j);
+     const int jim2 = Index::index_xy(i,jm);
+     const int jip2 = Index::index_xy(i,jp);
+ 
+     fn[ji] = f[ji]
+         + defines::coef_diff * (f[jim] - 4*f[ji] + f[jip] + f[jim2] + f[jip2] );
+};
+};
+
+
+>>>>>>> 66fabc9622896da52bb50f4673cf7db3edee0e16
 
 void ValuesDiffusion::
 allocate_values() {
@@ -77,7 +107,11 @@ void ValuesDiffusion::
 time_integrate(const ValuesDiffusion& valuesDiffusion) {
     real* fn = f_;
     const real* f = valuesDiffusion.f_;
+<<<<<<< HEAD
     real* d_f,* d_fn;  
+=======
+    real *d_f, *d_fn;  
+>>>>>>> 66fabc9622896da52bb50f4673cf7db3edee0e16
 
     printf("a");
     cudaMalloc(&d_f ,defines::ncell*sizeof(real));
