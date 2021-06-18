@@ -3,7 +3,10 @@
 
 #include "defines.h"
 
-namespace index {
+namespace Index {
+    #ifdef __CUDA_ARCH__
+    __host__ __device__ 
+    #endif
     inline int index_xy(int i, int j) {
         return  ( i + defines::nx* j );
     };
