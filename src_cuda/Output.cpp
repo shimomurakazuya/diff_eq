@@ -20,8 +20,10 @@ void Output::
 OutputDiffusionData(const ValuesDiffusion& v, const int t) {
 
     real f_ave,f_max;
+    real f_ana, diff;
     f_ave = average(v);
     f_max = maximum(v);
+    real time = double(t)* defines::dt *defines::iout;
 
     char filename[1024];
     sprintf(filename, "data/ascii_value_step%04d.dat",t ) ;
@@ -39,12 +41,14 @@ OutputDiffusionData(const ValuesDiffusion& v, const int t) {
     char filename2[1024];
     sprintf(filename2, "data/ascii_value_step%04d_downsize%01d.dat",t,defines::downsize ) ;
     FILE* fp2 = fopen( filename2 ,"w");
-    fprintf(fp2,"#t = %04d    x,   y,    f,      average, maximum \n",t  ); 
+    fprintf(fp2,"#t = %8.8f    x,   y,    f,      average, maximum \n",time  ); 
 
     for(int j=0; j<defines::ny; j+=defines::downsize) {
         for(int i=0; i<defines::nx; i+= defines::downsize) {
             const int ji = Index::index_xy(i,j);
-            fprintf(fp2,"%8.3f %8.3f %8.8f %8.3f %8.3f\n",v.xx()[i],v.yy()[j], v.ff()[ji], f_ave, f_max ); 
+            f_ana = defines::fmax * cos(v.xx()[i]/defines::lx*2.0*M_PI + v.yy()[j]/defines::lx*2.0*M_PI) * exp(- defines::c_dif* ((2.0 * M_PI/defines::lx)* (2.0 * M_PI/defines::lx)+ (2.0 * M_PI/defines::lx)* (2.0 * M_PI/defines::lx) ) * double(t)* defines::dt *defines::iout  );
+            diff = f_ana - v.ff()[ji];
+            fprintf(fp2,"%8.3f %8.3f %8.8f %8.3f %8.3f %10.8f  %10.8f \n",v.xx()[i],v.yy()[j], v.ff()[ji], f_ave, f_max,f_ana, diff ); 
         }
         fprintf(fp2,"\n" ); 
     }    
@@ -74,9 +78,8 @@ parameter(){
 
 //#pragma omp single  
     //printf("nx = %d, ny= %d, iter = %d, \n dx = %lf, nthread = %d, nthread_max = %d", defines::nx, defines::ny, defines::iter, defines::dx, defines::thread_num, omp_get_max_threads());
-    printf("nx = %d, ny= %d, iter = %d, \n dx = %lf, nthread = %d", defines::nx, defines::ny, defines::iter, defines::dx, defines::thread_num);
+    printf("nx = %d, ny= %d, iter = %d, \n dx = %lf \n, nthread = %d \n", defines::nx, defines::ny, defines::iter, defines::dx, defines::thread_num);
     //printf("nx = %d, ny= %d, iter = %d, \n dx = %lf, nthread = %d", defines::nx, defines::ny, defines::iter, defines::dx, defines::thread_num);
-
 }
 
 void Output::
@@ -86,10 +89,9 @@ print_sum(const ValuesDiffusion& v, const int t) {
         sum += v.ff()[i];
         mmm = std::fmax(mmm, v.ff()[i]);
     }
-//    printf ("    Expected a(1): %f %f %f \n",aj,bj,cj);
-//    std::cout << "t=" << std::setw(8) << t
-//       << " :    " << std::setw(8) << sum
-//       << " ,    " << std::setw(8) << mmm << std::endl;
+    std::cout << "t=" << std::setw(8) << t
+       << " :    " << std::setw(8) << sum
+       << " ,    " << std::setw(8) << mmm << std::endl;
 }
 
 void Output::

@@ -10,18 +10,20 @@ namespace defines {
     constexpr real lx = 1.0;
 //    constexpr int nx = 20000;
 //    constexpr int ny = 10000;
-    constexpr int nx = 2000000;
+    constexpr int nx = 200;
+    constexpr int ny = 100;
+//    constexpr int nx = 2000000;
 //    constexpr int nx = 2097152;
-    constexpr int ny =96;
+//    constexpr int ny =96;
 //    constexpr int nx = 6144;
 //    constexpr int ny = 6144 ;
     constexpr int ncell = nx*ny;
     constexpr int ncx = nx / 2;
     constexpr int ncy = ny / 2;
-    constexpr real dx = lx / nx;
+    constexpr double dx = lx / nx;
     //constexpr real lx = nx - 1;
-    constexpr int iter = 20;
-    constexpr int iout = 10;
+    constexpr int iter = 100000;
+    constexpr int iout = 1000;
 
     // diffusion
     constexpr real fmax = 1;
@@ -32,7 +34,7 @@ namespace defines {
     constexpr real coef_diff= c_dif * dt /dx / dx; 
 
     // downsize
-    constexpr int downsize = 50;
+    constexpr int downsize = 5;
     
     // 
     constexpr int data_num   = 4;
@@ -42,9 +44,8 @@ namespace defines {
     constexpr int alignment = 32;
 
     //cuda
-     constexpr int blocksizex = 1000;
-     constexpr int blocksizey = 24;
-
+     constexpr int blocksizex = 1;
+     constexpr int blocksizey = 1;
 
 };
 
