@@ -1,41 +1,53 @@
-#CXXFLAGS += -std=c++17 -O3 -Wall -Wextra
-#LDFLAGS  += -std=c++17 -lm -Wall -Wextra
-CXXFLAGS += -std=c++17 -O3  
-LDFLAGS  += -std=c++17 -lm  
-#OMPFLAGS += -fopenmp
-#NVCFLAGS += -g -O3 -std=c++11 -restrict
-##NVCFLAGS += --expt-extended-lambda
-##NVCFLAGS += -use_fast_math
-##NVCFLAGS += --default-stream per-thread
-#NVCFLAGS += -Xptxas -v -lineinfo
-#NVCFLAGS += -maxrregcount 127
-NVCFLAGS += --nvlink-options -Werror
+
+
+CXX := nvcc
+#CXX := g++
+
+ifeq ("$(CXX)", "nvcc")   # CXX as cuda
+CXXFLAGS := -x cu
+CXXFLAGS += -arch=sm_70 # sm_70 == Volta generation
+CXXFLAGS += -use_fast_math
+CXXFLAGS += -std=c++11 -O3  -Xcompiler=" -Wall -Wextra"
+CXXFLAGS += -Xcompiler="-fopenmp"
+CXXFLAGS += -extended-lambda
+CXXFLAGS += -D USE_NVCC
+#CXXFLAGS += -D DEBUG
+endif
+ifeq ("$(CXX)", "g++")    #CXX as OMP
+CXXFLAGS := -O3 -std=c++17 -fopenmp -Wall -Wextra
+CXXFLAGS += -D USE_OMP
+endif
+
+LD := $(CXX)
+ifeq ("$(CXX)", "nvcc")   # CXX as cuda
+LDFLAGS := -std=c++17 -lm
+LDFLAGS += -Xcompiler="-fopenmp"
+endif
+ifeq ("$(CXX)", "g++")    #CXX as OMP
+LDFLAGS := -std=c++17 -lm -fopenmp -Wall -Wextra
+endif
 
 
 .PHONY: all clean resultclean tagfiles
-
 TARGET := run
-
 SRCS := $(wildcard *.cpp)
 OBJS := $(SRCS:.cpp=.o)
 
 all: $(TARGET)
 
-  $(TARGET): $(OBJS)
-	nvcc -O3 -o  $@ $^ $(LDFLAGS) $(OMPFLAGS) $(NVCFLAGS)
-
+$(TARGET): $(OBJS)
+	$(LD) -o  $@ $^ $(LDFLAGS)
 
 .cpp.o:
-	nvcc -O3 -c  $< $(CXXFLAGS) $(OMPFLAGS) $(NVCFLAGS)
-
+	$(CXX) -c $< $(CXXFLAGS)
 
 clean:
-		rm -f $(TARGET)
-			rm -f $(OBJS)	
+	rm -f $(TARGET)
+	rm -f $(OBJS)	
 
 resultclean:
-		find -name data/ '*.dat' | xargs rm -f 
-			rm -f dif2d.*
+	find data/ -name '*.dat' | xargs rm -f
+	rm -f dif2d.*
 
 tagfiles:
-		ctags -R --langmap=c:+.hpp .
+	ctags -R --langmap=c:+.hpp .
